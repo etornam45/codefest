@@ -1,4 +1,3 @@
-// Advanced JavaScript Debugging Challenge
 // Task: Find and fix all bugs in this task management system
 
 class TaskManager {
@@ -9,7 +8,7 @@ class TaskManager {
         this.idCounter = 0;
     }
 
-    // Bug 1: Async method but not properly handling promises
+    
     async addTask(title, priority = 'medium', dueDate) {
         const task = {
             id: ++this.idCounter,
@@ -20,7 +19,7 @@ class TaskManager {
             createdAt: new Date()
         };
         
-        // Simulating async validation
+        
         const isValid = await this.validateTask(task);
         if (isValid) {
             this.tasks.push(task);
@@ -30,7 +29,7 @@ class TaskManager {
         throw new Error('Invalid task');
     }
 
-    // Bug 2: Promise not properly rejected/resolved
+    
     validateTask(task) {
         return new Promise((resolve, reject) => {
             setTimeout(() => {
@@ -43,7 +42,7 @@ class TaskManager {
         });
     }
 
-    // Bug 3: Incorrect array method usage
+    
     completeTask(taskId) {
         const taskIndex = this.tasks.findIndex(task => task.id === taskId);
         if (taskIndex !== -1) {
@@ -61,7 +60,7 @@ class TaskManager {
         return null;
     }
 
-    // Bug 4: Closure and scope issues
+    
     getTasksByPriority(priority) {
         var results = [];
         for (var i = 0; i < this.tasks.length; i++) {
@@ -74,7 +73,7 @@ class TaskManager {
         return results;
     }
 
-    // Bug 5: Prototype pollution vulnerability
+    
     updateTask(taskId, updates) {
         const task = this.tasks.find(t => t.id === taskId);
         if (task) {
@@ -85,7 +84,7 @@ class TaskManager {
         }
     }
 
-    // Bug 6: Memory leak in event listeners
+    
     addObserver(callback) {
         this.observers.push(callback);
     }
@@ -107,7 +106,7 @@ class TaskManager {
         });
     }
 
-    // Bug 7: Incorrect date comparison and sorting
+    
     getOverdueTasks() {
         const now = new Date();
         return this.tasks
@@ -115,7 +114,7 @@ class TaskManager {
             .sort((a, b) => a.dueDate - b.dueDate);
     }
 
-    // Bug 8: Race condition in async operations
+    
     async bulkAddTasks(taskData) {
         const promises = taskData.map(data => {
             return this.addTask(data.title, data.priority, data.dueDate);
@@ -133,7 +132,7 @@ class TaskManager {
         return results;
     }
 
-    // Bug 9: Incorrect this binding
+    
     getTaskStats() {
         const stats = {
             total: this.tasks.length + this.completedTasks.length,
@@ -142,7 +141,7 @@ class TaskManager {
             overdue: this.getOverdueTasks().length
         };
 
-        // Bug: Lost context when used as callback
+       
         const calculateCompletionRate = function() {
             return this.completedTasks.length / (this.tasks.length + this.completedTasks.length) * 100;
         };
@@ -152,7 +151,7 @@ class TaskManager {
     }
 }
 
-// Bug 10: Prototype method with incorrect implementation
+
 TaskManager.prototype.searchTasks = function(query) {
     return this.tasks.filter(task => {
         return task.title.toLowerCase().includes(query.toLowerCase()) ||
@@ -160,7 +159,7 @@ TaskManager.prototype.searchTasks = function(query) {
     });
 };
 
-// Bug 11: Event handling with memory leaks
+
 class TaskUI {
     constructor(taskManager) {
         this.taskManager = taskManager;
@@ -169,12 +168,12 @@ class TaskUI {
     }
 
     setupEventListeners() {
-        // Memory leak: not removing event listeners
+        
         this.taskManager.addObserver((event, data) => {
             this.updateUI(event, data);
         });
 
-        // Another memory leak
+        
         window.addEventListener('resize', () => {
             this.resizeHandler();
         });
@@ -189,28 +188,24 @@ class TaskUI {
     }
 
     destroy() {
-        // Bug: not properly cleaning up
         this.element.remove();
     }
 }
 
-// Bug 12: Incorrect usage and async handling
+
 async function demonstrateUsage() {
     const taskManager = new TaskManager();
     
     try {
-        // This will cause issues due to bugs in the code
         const task1 = taskManager.addTask('Complete project', 'high', '2024-01-15');
-        const task2 = taskManager.addTask('', 'low', '2024-01-20'); // Should fail validation
+        const task2 = taskManager.addTask('', 'low', '2024-01-20'); 
         const task3 = taskManager.addTask('Review code', 'medium', 'invalid-date');
         
         console.log('Tasks added:', task1, task2, task3);
         
-        // Bug: trying to access results immediately
         const highPriorityTasks = taskManager.getTasksByPriority('high');
         console.log('High priority tasks:', highPriorityTasks);
         
-        // Potential prototype pollution
         taskManager.updateTask(1, {
             '__proto__': { isAdmin: true },
             'constructor': { prototype: { isAdmin: true } }
@@ -224,37 +219,35 @@ async function demonstrateUsage() {
     }
 }
 
-// Bug 13: Global variable pollution and incorrect module pattern
+
 var globalTaskManager = new TaskManager();
 
 (function() {
-    // Bug: accidentally creating global variable
+    
     taskCounter = 0;
     
     function createTask(title) {
         return {
             id: ++taskCounter,
             title: title,
-            // Bug: incorrect date creation
+            
             createdAt: new Date().getTime()
         };
     }
     
-    // Bug: should be attached to proper object
+    
     window.createTask = createTask;
 })();
 
-// Usage that will trigger multiple bugs
+
 demonstrateUsage();
 
-// Additional test cases that will reveal bugs
+
 setTimeout(() => {
     const ui = new TaskUI(globalTaskManager);
     
-    // This will trigger the closure bug
     const results = globalTaskManager.getTasksByPriority('high');
     console.log('Delayed results:', results);
     
-    // This won't properly clean up
     ui.destroy();
 }, 1000);
